@@ -1,0 +1,13 @@
+create table census
+(Geographic_Area_Name varchar,
+"State" varchar,
+"2017_NAICS_code" varchar,
+NAICS2017_LABEL varchar,
+SEX_LABEL varchar,
+ETH_GROUP_LABEL varchar,
+RACE_GROUP_LABEL varchar,
+VET_GROUP_LABEL varchar,
+Number_of_employer_firms varchar,
+Number_of_employees varchar,
+"Annual_payroll_$1,000" varchar
+);
