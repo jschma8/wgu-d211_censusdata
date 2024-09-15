@@ -66,3 +66,10 @@ Where sex_label = 'Female';
 --add male_payroll varchar;
 
 select * from census;
+
+CREATE TABLE census_final AS
+    SELECT DISTINCT "State"
+	    FROM census;
+		
+alter table census_final 
+add primary key ("State");
