@@ -15,7 +15,7 @@ DROP TABLE census
 -- create the table census_raw -- 
 create table census_raw
 (Geographic_Area_Name varchar,
-"State" varchar,
+us_State varchar,
 "2017_NAICS_code" varchar,
 NAICS2017_LABEL varchar,
 SEX_LABEL varchar,
@@ -41,26 +41,22 @@ DELETE from census_raw where race_group_label <> 'Total';
 DELETE from census_raw where vet_group_label <> 'Total';
 
 -- create cleaned table --
-CREATE TABLE census AS
-    SELECT DISTINCT "State"
-	    FROM census_raw;
+CREATE TABLE census
+(us_State varchar,
+firms varchar,
+total_employees varchar,
+total_payroll varchar,
+female_employees varchar,
+female_payroll varchar,
+male_employees varchar,
+male_payroll varchar;
+)
 
-alter table census
-add primary key ("State");
-
-alter table census
-add column "firms" varchar,
-add column "total_employees" varchar,
-add column "total_payroll" varchar,
-add column female_employees varchar,
-add column female_payroll varchar,
-add column male_employees varchar,
-add column male_payroll varchar;
 
 -- add data to cleaned table
 UPDATE census census_raw
 SET census.firms = census_raw.number_of_employer_firms
-WHERE census.state = census_raw.state and census_raw.sex_label = 'Total'; 
+WHERE census.us_State = census_raw.us_State and census_raw.sex_label = 'Total'; 
 
 
 select * from census;
