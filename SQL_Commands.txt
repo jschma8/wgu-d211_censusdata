@@ -43,23 +43,24 @@ DELETE from census_raw where vet_group_label <> 'Total';
 -- create cleaned table --
 CREATE TABLE census AS
     SELECT DISTINCT "State"
-	    FROM census;
+	    FROM census_raw;
 
 alter table census
 add primary key ("State");
-add column "firms" varchar;
+
+alter table census
+add column "firms" varchar,
 add column "total_employees" varchar,
-add column "total_payroll" varchar;
-add column female_employees varchar;
-add column female_payroll varchar;
-add column male_employees varchar;
-add column add male_payroll varchar;
+add column "total_payroll" varchar,
+add column female_employees varchar,
+add column female_payroll varchar,
+add column male_employees varchar,
+add column male_payroll varchar;
 
 -- add data to cleaned table
-UPDATE census, census_raw
+UPDATE census census_raw
 SET census.firms = census_raw.number_of_employer_firms
 WHERE census.state = census_raw.state and census_raw.sex_label = 'Total'; 
 
 
 select * from census;
-
