@@ -7,9 +7,13 @@ In Browser, Open Server > Databases > Churn
 right click on Churn and open Query Tool
 In query editor copy and paste everything below:
 
+--delete before upload
+DROP TABLE census_raw
+DROP TABLE census
+
 -- SQL Commands: -- 
--- create the table census -- 
-create table census
+-- create the table census_raw -- 
+create table census_raw
 (Geographic_Area_Name varchar,
 "State" varchar,
 "2017_NAICS_code" varchar,
@@ -18,58 +22,44 @@ SEX_LABEL varchar,
 ETH_GROUP_LABEL varchar,
 RACE_GROUP_LABEL varchar,
 VET_GROUP_LABEL varchar,
-Number_of_employer_firms varchar,
-Number_of_employees varchar,
+number_of_employer_firms varchar,
+number_of_employees varchar,
 "Annual_payroll_$1,000" varchar
 );
 
 -- import data --
-COPY census
+COPY census_raw
 FROM 'C:\Users\Public\wgu-d211_censusdata-main\ABSCS2020.AB2000CSA01-Data.csv'
 DELIMITER ','
 CSV HEADER;
 
 -- clean up data --
--- drop to column --
-alter table census
-drop column geographic_area_name;
-
 --- drop rows ---
-DELETE from census where not "2017_NAICS_code" <> '0';
-DELETE from census where eth_group_label <> 'Total';
-DELETE from census where race_group_label <> 'Total';
-DELETE from census where vet_group_label <> 'Total';
-DELETE from census where sex_label = 'Total';
-DELETE from census where sex_group_label = 'Equally male/female';
+DELETE from census_raw where not "2017_NAICS_code" <> '0';
+DELETE from census_raw where eth_group_label <> 'Total';
+DELETE from census_raw where race_group_label <> 'Total';
+DELETE from census_raw where vet_group_label <> 'Total';
+
+-- create cleaned table --
+CREATE TABLE census AS
+    SELECT DISTINCT "State"
+	    FROM census;
 
 alter table census
-drop column female_employees;
+add primary key ("State");
+add column "firms" varchar;
+add column "total_employees" varchar,
+add column "total_payroll" varchar;
+add column female_employees varchar;
+add column female_payroll varchar;
+add column male_employees varchar;
+add column add male_payroll varchar;
 
-ALTER TABLE census
-add female_employees varchar;
+-- add data to cleaned table
+UPDATE census, census_raw
+SET census.firms = census_raw.number_of_employer_firms
+WHERE census.state = census_raw.state and census_raw.sex_label = 'Total'; 
 
---UPDATE employees, emp2
---SET employees.first_name = emp2.first_name
---WHERE employees.id = emp2.id
-
-UPDATE census
-SET female_employees = number_of_employees
-Where sex_label = 'Female';
-
---ALTER TABLE census
---add female_payroll varchar;
-
---ALTER TABLE census
---add male_payroll varchar;
-
---ALTER TABLE census
---add male_payroll varchar;
 
 select * from census;
 
-CREATE TABLE census_final AS
-    SELECT DISTINCT "State"
-	    FROM census;
-		
-alter table census_final 
-add primary key ("State");
