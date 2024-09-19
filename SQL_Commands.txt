@@ -5,7 +5,18 @@ destination location needs to be "C:\Users\Public"
 Open pgAdmin4
 In Browser, Open Server > Databases > Churn
 right click on Churn and open Query Tool
-In query editor copy and paste everything below:
+In query editor copy and paste everything below SQL commands
+
+Upon completions of SQL commands, open Tableua
+Connect to a Server >  More > PostgreSQL
+Use the following credentials to connect to the server
+Server: localhost
+Port: 5432
+Database: churn
+Authentication: Username and Password
+Username: postgres
+Password: Passw0rd!
+
 
 -- SQL Commands: -- 
 -- create the table census_raw -- 
@@ -102,3 +113,13 @@ AND
 -- drop extra census table
 DROP TABLE census_raw;
 
+-- add primary and foreign key relationships
+ALTER TABLE
+	census
+ADD PRIMARY KEY (us_state);
+
+ALTER TABLE
+	customer
+
+
+-- End of SQL commands
