@@ -71,7 +71,7 @@ male_payroll varchar
 
 -- add data into correct columns
 INSERT INTO census
-SELECT DISTINCT "state" FROM location
+SELECT DISTINCT "state" FROM location;
 
 UPDATE
 	census AS cn
