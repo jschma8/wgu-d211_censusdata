@@ -7,10 +7,6 @@ In Browser, Open Server > Databases > Churn
 right click on Churn and open Query Tool
 In query editor copy and paste everything below:
 
---delete before upload
-DROP TABLE census_raw
-DROP TABLE census
-
 -- SQL Commands: -- 
 -- create the table census_raw -- 
 create table census_raw
@@ -62,34 +58,15 @@ male_employees varchar,
 male_payroll varchar
 );
 
+-- add data into correct columns
 INSERT INTO census
 SELECT DISTINCT us_state FROM census_raw;
 
 UPDATE
 	census AS cn
 SET 
-	firms = cr.number_of_employer_firms
-FROM
-	census_raw AS cr
-WHERE
-	 cr.us_State = cn.us_State
-AND
-	cr.sex_label = 'Total'; 
-
-UPDATE
-	census AS cn
-SET 
-	total_employees = cr.number_of_employees
-FROM
-	census_raw AS cr
-WHERE
-	 cr.us_State = cn.us_State
-AND
-	cr.sex_label = 'Total'; 
-
-UPDATE
-	census AS cn
-SET 
+	firms = cr.number_of_employer_firms,
+	total_employees = cr.number_of_employees,
 	total_payroll = cr.payroll
 FROM
 	census_raw AS cr
@@ -101,17 +78,7 @@ AND
 UPDATE
 	census AS cn
 SET 
-	female_employees = cr.number_of_employees
-FROM
-	census_raw AS cr
-WHERE
-	 cr.us_State = cn.us_State
-AND
-	cr.sex_label = 'Female'; 
-
-UPDATE
-	census AS cn
-SET 
+	female_employees = cr.number_of_employees,
 	female_payroll = cr.payroll
 FROM
 	census_raw AS cr
@@ -123,7 +90,8 @@ AND
 UPDATE
 	census AS cn
 SET 
-	male_employees = cr.number_of_employees
+	male_employees = cr.number_of_employees,
+	male_payroll = cr.payroll
 FROM
 	census_raw AS cr
 WHERE
@@ -131,13 +99,6 @@ WHERE
 AND
 	cr.sex_label = 'Male'; 
 
-UPDATE
-	census AS cn
-SET 
-	male_payroll = cr.payroll
-FROM
-	census_raw AS cr
-WHERE
-	 cr.us_State = cn.us_State
-AND
-	cr.sex_label = 'Male';
+-- drop extra census table
+DROP TABLE census_raw;
+
