@@ -71,7 +71,7 @@ male_payroll varchar
 
 -- add data into correct columns
 INSERT INTO census
-SELECT DISTINCT us_state FROM census_raw;
+SELECT DISTINCT "state" FROM location
 
 UPDATE
 	census AS cn
@@ -119,7 +119,11 @@ ALTER TABLE
 ADD PRIMARY KEY (us_state);
 
 ALTER TABLE
-	customer
+	location
+ADD CONSTRAINT
+	"state" 
+FOREIGN KEY ("state")
+REFERENCES census (us_state);
 
 
 -- End of SQL commands
