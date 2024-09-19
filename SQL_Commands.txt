@@ -35,10 +35,20 @@ CSV HEADER;
 
 -- clean up data --
 --- drop rows ---
-DELETE from census_raw where not "2017_NAICS_code" <> '0';
+DELETE from census_raw where "2017_NAICS_code" <> '0';
 DELETE from census_raw where eth_group_label <> 'Total';
 DELETE from census_raw where race_group_label <> 'Total';
 DELETE from census_raw where vet_group_label <> 'Total';
+DELETE FROM census_raw where us_State = '#N/A';
+DELETE FROM census_raw where us_State is NULL;
+
+--rename problem columns
+ALTER TABLE 
+	census_raw
+RENAME COLUMN
+	"Annual_payroll_$1,000"
+TO
+	payroll;
 
 -- create cleaned table --
 CREATE TABLE census
@@ -49,14 +59,85 @@ total_payroll varchar,
 female_employees varchar,
 female_payroll varchar,
 male_employees varchar,
-male_payroll varchar;
-)
+male_payroll varchar
+);
 
+INSERT INTO census
+SELECT DISTINCT us_state FROM census_raw;
 
--- add data to cleaned table
-UPDATE census census_raw
-SET census.firms = census_raw.number_of_employer_firms
-WHERE census.us_State = census_raw.us_State and census_raw.sex_label = 'Total'; 
+UPDATE
+	census AS cn
+SET 
+	firms = cr.number_of_employer_firms
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Total'; 
 
+UPDATE
+	census AS cn
+SET 
+	total_employees = cr.number_of_employees
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Total'; 
 
-select * from census;
+UPDATE
+	census AS cn
+SET 
+	total_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Total'; 
+
+UPDATE
+	census AS cn
+SET 
+	female_employees = cr.number_of_employees
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Female'; 
+
+UPDATE
+	census AS cn
+SET 
+	female_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Female'; 
+
+UPDATE
+	census AS cn
+SET 
+	male_employees = cr.number_of_employees
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Male'; 
+
+UPDATE
+	census AS cn
+SET 
+	male_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Male';
