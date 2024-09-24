@@ -125,5 +125,46 @@ ADD CONSTRAINT
 FOREIGN KEY ("state")
 REFERENCES census (us_state);
 
+ALTER TABLE
+	location
+ADD
+	gender varchar;
+
+ALTER TABLE
+	location
+ADD
+	churn varchar;
+
+ALTER TABLE
+	location
+ADD
+	tenure varchar;
+
+UPDATE
+	location AS loc
+SET 
+	gender = cus.gender
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+ 
+UPDATE
+	location AS loc
+SET 
+	churn = cus.churn
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+
+UPDATE
+	location AS loc
+SET 
+	tenure = cus.tenure
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
 
 -- End of SQL commands
