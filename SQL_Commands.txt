@@ -167,4 +167,18 @@ FROM
 WHERE
 	 cus.location_id = loc.location_id;
 
+ALTER TABLE
+	location
+ADD
+	income varchar;
+
+UPDATE
+	location AS loc
+SET 
+	income = cus.income
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+
 -- End of SQL commands
