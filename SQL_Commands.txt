@@ -1,21 +1,39 @@
-download file 
-extract all
-destination location needs to be "C:\Users\Public"
+Open the following github public repo: https://github.com/jschma8/wgu-d211_censusdata.git
+Click the green button labeled "<> Code"
+download the files
+Open Download folder
+right click on the downloaded zip file and extract all with
+destination location set to "C:\Users\Public"
+Extract.
+
+Open extracted folder at navigate to C:\Users\Public\wgu-d211_censusdata-main
+Open text file labeled SQL_Commands.txt
 
 Open pgAdmin4
-In Browser, Open Server > Databases > Churn
+In the pgAdmin Browser, Open Server > Open Databases > Open Churn
 right click on Churn and open Query Tool
-In query editor copy and paste everything below SQL commands
+Activate Text File Window "SQL_Commands.txt"
+Select all with ctlr A
+Then copy with ctlr C
+(Alternately in text editor you can open Edit drop down, select all, and then edit drop down again and copy
+In query editor copy and paste everything below the section labeled SQL commands
+ReActivate pgAdmin4 and in Query editor paste all the SQL commands, either ctrl v or right mouse click and select paste
+Now you run the commands, by either hitting the play button or the F5 key.
 
-Upon completions of SQL commands, open Tableua
-Connect to a Server >  More > PostgreSQL
-Use the following credentials to connect to the server
-Server: localhost
-Port: 5432
-Database: churn
-Authentication: Username and Password
+
+Upon completions of SQL commands, open Tableau 2021.4
+On the main page upper right hand corner next to Discover Nav bar,
+Select Open a Workbook:
+navigate to C:\Users\Public\wgu-d211_censusdata-main
+and select Book1
 Username: postgres
 Password: Passw0rd!
+Sign In
+
+To begin navigating dashboards, hit the F7 button or the Drop down screen (Presentation mode) in the top nav bar.
+To navigate the storybook select the top gray buttons and follow the directions on each page to make filter changes.
+
+Below is an additional copy of the SQL commands used in the cleaning of the data for the workbook.
 
 
 -- SQL Commands: -- 
