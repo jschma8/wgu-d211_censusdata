@@ -1,0 +1,202 @@
+Open the following github public repo: https://github.com/jschma8/wgu-d211_censusdata.git
+Click the green button labeled "<> Code"
+download the files
+Open Download folder
+right click on the downloaded zip file and extract all with
+destination location set to "C:\Users\Public"
+Extract.
+
+Open extracted folder at navigate to C:\Users\Public\wgu-d211_censusdata-main
+Open text file labeled SQL_Commands.txt
+
+Open pgAdmin4
+In the pgAdmin Browser, Open Server > Open Databases > Open Churn
+right click on Churn and open Query Tool
+Activate Text File Window "SQL_Commands.txt"
+Select all with ctlr A
+Then copy with ctlr C
+(Alternately in text editor you can open Edit drop down, select all, and then edit drop down again and copy
+In query editor copy and paste everything below the section labeled SQL commands
+ReActivate pgAdmin4 and in Query editor paste all the SQL commands, either ctrl v or right mouse click and select paste
+Now you run the commands, by either hitting the play button or the F5 key.
+
+
+Upon completions of SQL commands, open Tableau 2021.4
+On the main page upper right hand corner next to Discover Nav bar,
+Select Open a Workbook:
+navigate to C:\Users\Public\wgu-d211_censusdata-main
+and select Book1
+Username: postgres
+Password: Passw0rd!
+Sign In
+
+To begin navigating dashboards, hit the F7 button or the Drop down screen (Presentation mode) in the top nav bar.
+To navigate the storybook select the top gray buttons and follow the directions on each page to make filter changes.
+
+Below is an additional copy of the SQL commands used in the cleaning of the data for the workbook.
+
+
+-- SQL Commands: -- 
+-- create the table census_raw -- 
+create table census_raw
+(Geographic_Area_Name varchar,
+us_State varchar,
+"2017_NAICS_code" varchar,
+NAICS2017_LABEL varchar,
+SEX_LABEL varchar,
+ETH_GROUP_LABEL varchar,
+RACE_GROUP_LABEL varchar,
+VET_GROUP_LABEL varchar,
+number_of_employer_firms varchar,
+number_of_employees varchar,
+"Annual_payroll_$1,000" varchar
+);
+
+-- import data --
+COPY census_raw
+FROM 'C:\Users\Public\wgu-d211_censusdata-main\ABSCS2020.AB2000CSA01-Data.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- clean up data --
+--- drop rows ---
+DELETE from census_raw where "2017_NAICS_code" <> '0';
+DELETE from census_raw where eth_group_label <> 'Total';
+DELETE from census_raw where race_group_label <> 'Total';
+DELETE from census_raw where vet_group_label <> 'Total';
+DELETE FROM census_raw where us_State = '#N/A';
+DELETE FROM census_raw where us_State is NULL;
+
+--rename problem columns
+ALTER TABLE 
+	census_raw
+RENAME COLUMN
+	"Annual_payroll_$1,000"
+TO
+	payroll;
+
+-- create cleaned table --
+CREATE TABLE census
+(us_State varchar,
+firms varchar,
+total_employees varchar,
+total_payroll varchar,
+female_employees varchar,
+female_payroll varchar,
+male_employees varchar,
+male_payroll varchar
+);
+
+-- add data into correct columns
+INSERT INTO census
+SELECT DISTINCT "state" FROM location;
+
+UPDATE
+	census AS cn
+SET 
+	firms = cr.number_of_employer_firms,
+	total_employees = cr.number_of_employees,
+	total_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Total'; 
+
+UPDATE
+	census AS cn
+SET 
+	female_employees = cr.number_of_employees,
+	female_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Female'; 
+
+UPDATE
+	census AS cn
+SET 
+	male_employees = cr.number_of_employees,
+	male_payroll = cr.payroll
+FROM
+	census_raw AS cr
+WHERE
+	 cr.us_State = cn.us_State
+AND
+	cr.sex_label = 'Male'; 
+
+-- drop extra census table
+DROP TABLE census_raw;
+
+-- add primary and foreign key relationships
+ALTER TABLE
+	census
+ADD PRIMARY KEY (us_state);
+
+ALTER TABLE
+	location
+ADD CONSTRAINT
+	"state" 
+FOREIGN KEY ("state")
+REFERENCES census (us_state);
+
+ALTER TABLE
+	location
+ADD
+	gender varchar;
+
+ALTER TABLE
+	location
+ADD
+	churn varchar;
+
+ALTER TABLE
+	location
+ADD
+	tenure varchar;
+
+UPDATE
+	location AS loc
+SET 
+	gender = cus.gender
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+ 
+UPDATE
+	location AS loc
+SET 
+	churn = cus.churn
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+
+UPDATE
+	location AS loc
+SET 
+	tenure = cus.tenure
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+
+ALTER TABLE
+	location
+ADD
+	income varchar;
+
+UPDATE
+	location AS loc
+SET 
+	income = cus.income
+FROM
+	customer AS cus
+WHERE
+	 cus.location_id = loc.location_id;
+
+-- End of SQL commands
