@@ -118,7 +118,7 @@ ADD
 ALTER TABLE
 	location
 ADD
-	tenure varchar;
+	income varchar;
 
 UPDATE
 	location AS loc
@@ -137,20 +137,6 @@ FROM
 	customer AS cus
 WHERE
 	 cus.location_id = loc.location_id;
-
-UPDATE
-	location AS loc
-SET 
-	tenure = cus.tenure
-FROM
-	customer AS cus
-WHERE
-	 cus.location_id = loc.location_id;
-
-ALTER TABLE
-	location
-ADD
-	income varchar;
 
 UPDATE
 	location AS loc
